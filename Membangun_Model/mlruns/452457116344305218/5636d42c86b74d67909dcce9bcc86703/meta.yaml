@@ -1,0 +1,15 @@
+artifact_uri: file:///c:/Users/immab/Documents/Github/SMSML_Ida_Sri_Afiqah/Membangun_Model/mlruns/452457116344305218/5636d42c86b74d67909dcce9bcc86703/artifacts
+end_time: 1749803307469
+entry_point_name: ''
+experiment_id: '452457116344305218'
+lifecycle_stage: active
+run_id: 5636d42c86b74d67909dcce9bcc86703
+run_name: KNN_Tuning_Modelling
+run_uuid: 5636d42c86b74d67909dcce9bcc86703
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1749803280098
+status: 3
+tags: []
+user_id: danyeka
