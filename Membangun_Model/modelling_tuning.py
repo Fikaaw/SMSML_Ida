@@ -11,17 +11,23 @@ import mlflow.sklearn
 from mlflow.models.signature import infer_signature
 import json
 from datetime import datetime
-# import dagshub
-# from dagshub import dagshub_logger
-# dagshub.init(repo_owner='Fikaaw', repo_name='pulmonary_cancer_modelling_experiment_tracking', mlflow=True)
-# mlflow.set_tracking_uri("https://dagshub.com/Fikaaw/pulmonary_cancer_modelling_experiment_tracking.mlflow")
-
-tracking_uri = "file:///" + "c:/Users/immab/Documents/Github/SMSML_Ida/Membangun_Model/mlruns"
-mlflow.set_tracking_uri(tracking_uri)
-
-print(f"MLflow Tracking URI: {tracking_uri}")
-print("Untuk melihat MLflow UI, jalankan: mlflow ui --port 5001")
-print("Kemudian buka: http://localhost:5001")
+import dagshub
+from dagshub import dagshub_logger
+# Inisialisasi DagsHub dengan fallback ke local
+try:
+    dagshub.init(repo_owner='Fikaaw', repo_name='pulm_cancer_modelling_experiment_tracking', mlflow=True)
+    mlflow.set_tracking_uri("https://dagshub.com/Fikaaw/pulm_cancer_modelling_experiment_tracking.mlflow")
+    print(f"MLflow Tracking URI: https://dagshub.com/Fikaaw/pulm_cancer_modelling_experiment_tracking.mlflow")
+    print("Experiment akan tercatat di DagsHub")
+    print("Untuk melihat hasil: https://dagshub.com/Fikaaw/pulm_cancer_modelling_experiment_tracking")
+except Exception as e:
+    print(f"DagsHub connection failed: {e}")
+    print("Fallback to local MLflow tracking")
+    tracking_uri = "file:///" + "c:/Users/immab/Documents/Github/SMSML_Ida/Membangun_Model/mlruns"
+    mlflow.set_tracking_uri(tracking_uri)
+    print(f"MLflow Tracking URI: {tracking_uri}")
+    print("Untuk melihat MLflow UI, jalankan: mlflow ui --port 5001")
+    print("Kemudian buka: http://localhost:5001")
 
 mlflow.set_experiment("Pulm Cancer Prediction Tuning")
 
