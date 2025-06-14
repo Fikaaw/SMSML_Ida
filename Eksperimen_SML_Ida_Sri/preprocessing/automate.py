@@ -22,7 +22,7 @@ def map_gender(df, col_name='gender'):
         df[col_name] = df[col_name].map({'M': 0, 'F': 1}).fillna(-1).astype(int)
     return df
 
-def map_lung_cancer(df, col_name='lung_cancer'):
+def map_pulmonary_cancer(df, col_name='pulmonary_cancer'):
     if col_name in df.columns:
         df[col_name] = df[col_name].map({'YES': 1, 'NO': 0}).fillna(-1).astype(int)
     return df
@@ -37,7 +37,7 @@ def preprocess_data(filepath):
     df = clean_column_names(df)
     df = drop_duplicates(df)
     df = map_gender(df)
-    df = map_lung_cancer(df)
+    df = map_pulmonary_cancer(df)
 
     binary_cols = ['smoking', 'yellow_fingers', 'anxiety', 'peer_pressure',
                    'chronic_disease', 'fatigue', 'allergy', 'wheezing',
@@ -45,7 +45,7 @@ def preprocess_data(filepath):
                    'swallowing_difficulty', 'chest_pain']
     df = map_binary_columns(df, binary_cols)
 
-    target_column = 'lung_cancer'
+    target_column = 'pulmonary_cancer'
     feature_columns = [col for col in df.columns if col != target_column]
 
     X = df[feature_columns]

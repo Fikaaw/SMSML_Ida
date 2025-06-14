@@ -11,10 +11,10 @@ import mlflow.sklearn
 from mlflow.models.signature import infer_signature
 import json
 from datetime import datetime
-import dagshub
-from dagshub import dagshub_logger
-dagshub.init(repo_owner='Fikaaw', repo_name='lung_cancer_modelling_experiment_tracking', mlflow=True)
-mlflow.set_tracking_uri("https://dagshub.com/Fikaaw/lung_cancer_modelling_experiment_tracking.mlflow")
+# import dagshub
+# from dagshub import dagshub_logger
+# dagshub.init(repo_owner='Fikaaw', repo_name='pulmonary_cancer_modelling_experiment_tracking', mlflow=True)
+# mlflow.set_tracking_uri("https://dagshub.com/Fikaaw/pulmonary_cancer_modelling_experiment_tracking.mlflow")
 
 tracking_uri = "file:///" + "c:/Users/immab/Documents/Github/SMSML_Ida/Membangun_Model/mlruns"
 mlflow.set_tracking_uri(tracking_uri)
@@ -23,20 +23,20 @@ print(f"MLflow Tracking URI: {tracking_uri}")
 print("Untuk melihat MLflow UI, jalankan: mlflow ui --port 5001")
 print("Kemudian buka: http://localhost:5001")
 
-mlflow.set_experiment("Lung Cancer Prediction Tuning")
+mlflow.set_experiment("Pulm Cancer Prediction Tuning")
 
-data = pd.read_csv("lung_cancer_cln.csv")
+data = pd.read_csv("pulmonarycancerclean.csv")
 
 for col in data.columns:
-    if col != 'lung_cancer':
+    if col != 'pulmonary_cancer':
         data[col] = data[col].astype('float64')
     else:
         # Keep target variable as int for classification
         data[col] = data[col].astype('int')
 
 X_train, X_test, y_train, y_test = train_test_split(
-    data.drop("lung_cancer", axis=1),
-    data["lung_cancer"],
+    data.drop("pulmonary_cancer", axis=1),
+    data["pulmonary_cancer"],
     test_size=0.2,
     random_state=42
 )

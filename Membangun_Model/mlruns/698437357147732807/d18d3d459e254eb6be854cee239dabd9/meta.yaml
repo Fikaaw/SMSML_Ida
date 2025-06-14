@@ -1,0 +1,15 @@
+artifact_uri: file:///c:/Users/immab/Documents/Github/SMSML_Ida/Membangun_Model/mlruns/698437357147732807/d18d3d459e254eb6be854cee239dabd9/artifacts
+end_time: 1749879550256
+entry_point_name: ''
+experiment_id: '698437357147732807'
+lifecycle_stage: active
+run_id: d18d3d459e254eb6be854cee239dabd9
+run_name: KNN_Base_Modelling
+run_uuid: d18d3d459e254eb6be854cee239dabd9
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1749879525491
+status: 3
+tags: []
+user_id: K E I
