@@ -1,1 +1,1 @@
-https://dagshub.com/Fikaaw/lung_cancer_modelling_experiment_tracking.mlflow
+https://dagshub.com/Fikaaw/pulm_cancer_modelling_experiment_tracking.mlflow
