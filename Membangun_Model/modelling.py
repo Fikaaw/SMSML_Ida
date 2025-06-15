@@ -5,28 +5,20 @@ from sklearn.model_selection import train_test_split
 import random
 import numpy as np
 import dagshub
-from dagshub import dagshub_logger
 import mlflow.sklearn
+import os
 
-# Inisialisasi DagsHub dengan fallback ke local
-try:
-    dagshub.init(repo_owner='Fikaaw', repo_name='pulm_cancer_modelling_experiment_tracking', mlflow=True)
-    mlflow.set_tracking_uri("https://dagshub.com/Fikaaw/pulm_cancer_modelling_experiment_tracking.mlflow")
-    print(f"MLflow Tracking URI: https://dagshub.com/Fikaaw/pulm_cancer_modelling_experiment_tracking.mlflow")
-    print("Experiment akan tercatat di DagsHub")
-    print("Untuk melihat hasil: https://dagshub.com/Fikaaw/pulm_cancer_modelling_experiment_tracking")
-except Exception as e:
-    print(f"DagsHub connection failed: {e}")
-    print("Fallback to local MLflow tracking")
-    tracking_uri = "file:///" + "c:/Users/immab/Documents/Github/SMSML_Ida/Membangun_Model/mlruns"
-    mlflow.set_tracking_uri(tracking_uri)
-    print(f"MLflow Tracking URI: {tracking_uri}")
-    print("Untuk melihat MLflow UI, jalankan: mlflow ui --port 5001")
-    print("Kemudian buka: http://localhost:5001")
+# Inisialisasi DagsHub dan MLflow tracking
+dagshub.init(repo_owner='Fikaaw', repo_name='pulm_cancer_modelling_experiment_tracking', mlflow=True)
+mlflow.set_tracking_uri("https://dagshub.com/Fikaaw/pulm_cancer_modelling_experiment_tracking.mlflow")
+
+print(f"MLflow Tracking URI: https://dagshub.com/Fikaaw/pulm_cancer_modelling_experiment_tracking.mlflow")
+print("Untuk melihat hasil: https://dagshub.com/Fikaaw/pulm_cancer_modelling_experiment_tracking")
 
 mlflow.set_experiment("Pulm Cancer Prediction")
 
-# mlflow.sklearn.autolog()
+# Aktifkan autolog untuk automatic logging ke DagsHub
+mlflow.sklearn.autolog()
 
 data = pd.read_csv("pulmonarycancerclean.csv")
 

@@ -4,32 +4,23 @@ from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import GridSearchCV, train_test_split
 from sklearn.neighbors import KNeighborsClassifier
-from sklearn.metrics import accuracy_score, confusion_matrix, classification_report
-import seaborn as sns
-import matplotlib.pyplot as plt
+from sklearn.metrics import accuracy_score
+import mlflow
 import mlflow.sklearn
-from mlflow.models.signature import infer_signature
-import json
-from datetime import datetime
 import dagshub
-from dagshub import dagshub_logger
-# Inisialisasi DagsHub dengan fallback ke local
-try:
-    dagshub.init(repo_owner='Fikaaw', repo_name='pulm_cancer_modelling_experiment_tracking', mlflow=True)
-    mlflow.set_tracking_uri("https://dagshub.com/Fikaaw/pulm_cancer_modelling_experiment_tracking.mlflow")
-    print(f"MLflow Tracking URI: https://dagshub.com/Fikaaw/pulm_cancer_modelling_experiment_tracking.mlflow")
-    print("Experiment akan tercatat di DagsHub")
-    print("Untuk melihat hasil: https://dagshub.com/Fikaaw/pulm_cancer_modelling_experiment_tracking")
-except Exception as e:
-    print(f"DagsHub connection failed: {e}")
-    print("Fallback to local MLflow tracking")
-    tracking_uri = "file:///" + "c:/Users/immab/Documents/Github/SMSML_Ida/Membangun_Model/mlruns"
-    mlflow.set_tracking_uri(tracking_uri)
-    print(f"MLflow Tracking URI: {tracking_uri}")
-    print("Untuk melihat MLflow UI, jalankan: mlflow ui --port 5001")
-    print("Kemudian buka: http://localhost:5001")
+import os
+
+# Inisialisasi DagsHub dan MLflow tracking
+dagshub.init(repo_owner='Fikaaw', repo_name='pulm_cancer_modelling_experiment_tracking', mlflow=True)
+mlflow.set_tracking_uri("https://dagshub.com/Fikaaw/pulm_cancer_modelling_experiment_tracking.mlflow")
+
+print(f"MLflow Tracking URI: https://dagshub.com/Fikaaw/pulm_cancer_modelling_experiment_tracking.mlflow")
+print("Untuk melihat hasil: https://dagshub.com/Fikaaw/pulm_cancer_modelling_experiment_tracking")
 
 mlflow.set_experiment("Pulm Cancer Prediction Tuning")
+
+# Aktifkan autolog untuk automatic logging ke DagsHub
+mlflow.sklearn.autolog()
 
 data = pd.read_csv("pulmonarycancerclean.csv")
 
@@ -68,47 +59,9 @@ with mlflow.start_run(run_name=run_name) as run:
 
     best_model = grid_search.best_estimator_
     y_pred = best_model.predict(X_test)
-
     accuracy = accuracy_score(y_test, y_pred)
-    cm = confusion_matrix(y_test, y_pred)
-    report = classification_report(y_test, y_pred, output_dict=True)
-
-    # Logging manual metric dan parameter
-    mlflow.log_params(grid_search.best_params_)
-    mlflow.log_metric("accuracy", accuracy)
-    mlflow.log_metric("precision_class_0", report['0']['precision'])
-    mlflow.log_metric("recall_class_0", report['0']['recall'])
-    mlflow.log_metric("precision_class_1", report['1']['precision'])
-    mlflow.log_metric("recall_class_1", report['1']['recall'])
-
-    # save confusion matrix as image
-    plt.figure(figsize=(5, 4))
-    sns.heatmap(cm, annot=True, fmt='d', cmap='Blues', cbar=False)
-    plt.title('KNN Confusion Matrix (Tuned)')
-    plt.xlabel('Predicted')
-    plt.ylabel('Actual')
-    plot_path = "training_confusion_matrix.png"
-    plt.savefig(plot_path)
-    plt.close()
-    mlflow.log_artifact(plot_path)
-
-    # Save model
-    signature = infer_signature(X_test, y_pred)
-    mlflow.sklearn.log_model(best_model, "best_knn_model", signature=signature)
-
-    # Save classification_report as JSON
-    with open("metric_info.json", "w") as f:
-        json.dump(report, f, indent=4)
-    mlflow.log_artifact("metric_info.json")
-
-    # Make and save estimator.html
-    with open("estimator.html", "w") as f:
-        f.write("<html><body>")
-        f.write("<h1>Best Estimator</h1>")
-        f.write(f"<pre>{str(best_model)}</pre>")
-        f.write("</body></html>")
-    mlflow.log_artifact("estimator.html")
     
     print(f"Best parameters: {grid_search.best_params_}")
     print(f"Best cross-validation score: {grid_search.best_score_:.4f}")
     print(f"Test accuracy: {accuracy:.4f}")
+    print("All parameters, metrics, and model artifacts logged automatically via autolog")
