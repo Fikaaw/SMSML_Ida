@@ -4,21 +4,17 @@ from sklearn.neighbors import KNeighborsClassifier
 from sklearn.model_selection import train_test_split
 import random
 import numpy as np
-import dagshub
 import mlflow.sklearn
-import os
 
-# Inisialisasi DagsHub dan MLflow tracking
-dagshub.init(repo_owner='Fikaaw', repo_name='pulm_cancer_modelling_experiment_tracking', mlflow=True)
-mlflow.set_tracking_uri("https://dagshub.com/Fikaaw/pulm_cancer_modelling_experiment_tracking.mlflow")
+# Setup MLflow tracking lokal
+mlflow.set_tracking_uri("file:./mlruns")
+mlflow.set_experiment("Pulm Cancer Prediction Local")
 
-print(f"MLflow Tracking URI: https://dagshub.com/Fikaaw/pulm_cancer_modelling_experiment_tracking.mlflow")
-print("Untuk melihat hasil: https://dagshub.com/Fikaaw/pulm_cancer_modelling_experiment_tracking")
-
-mlflow.set_experiment("Pulm Cancer Prediction")
-
-# Aktifkan autolog untuk automatic logging ke DagsHub
+# Aktifkan autolog untuk automatic logging secara lokal
 mlflow.sklearn.autolog()
+
+print("MLflow Tracking URI: file:./mlruns")
+print("Untuk melihat hasil: jalankan 'mlflow ui' di terminal")
 
 data = pd.read_csv("pulmonarycancerclean.csv")
 
@@ -40,34 +36,14 @@ input_example = X_train[0:5]
 run_name = f"KNN_Base_Modelling"
 
 with mlflow.start_run(run_name=run_name):
-    # Contoh logging parameter dan metrik
-    n_neighbors = 5
-    mlflow.log_param("n_neighbors", n_neighbors)
-    mlflow.log_param("algorithm", "auto")
-    mlflow.log_param("weights", "uniform")
-    mlflow.log_param("test_size", 0.2)
-    mlflow.log_param("random_state", 42)
-    
-    # Train model
-    model = KNeighborsClassifier(n_neighbors=n_neighbors, algorithm='auto')
+    # Training model dengan autolog aktif - semua parameter, metrik, dan model akan di-log otomatis
+    model = KNeighborsClassifier(n_neighbors=5, algorithm='auto')
     model.fit(X_train, y_train)
-
-    # Log model
-    mlflow.sklearn.log_model(
-        sk_model=model,
-        artifact_path="model",
-        input_example=input_example
-    )
-
-    # Calculate and log metrics
+    
+    # Evaluasi model - metrik akan di-log otomatis oleh autolog
     accuracy = model.score(X_test, y_test)
     train_accuracy = model.score(X_train, y_train)
     
-    # Log metrics
-    mlflow.log_metric("test_accuracy", accuracy)
-    mlflow.log_metric("train_accuracy", train_accuracy)
-    mlflow.log_metric("data_size", len(data))
-    mlflow.log_metric("train_size", len(X_train))
-    mlflow.log_metric("test_size", len(X_test))
-    
     print(f"Model trained with accuracy: {accuracy:.4f}")
+    print(f"Train accuracy: {train_accuracy:.4f}")
+    print("Semua parameter, metrik, dan model telah di-log otomatis oleh MLflow autolog")
